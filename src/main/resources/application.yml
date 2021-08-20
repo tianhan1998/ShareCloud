@@ -12,7 +12,8 @@ spring:
   mvc:
     format:
       date: yyyy-MM-dd
-
+    view:
+      prefix: box
   thymeleaf:
     mode: HTML5
     encoding: UTF-8
@@ -20,6 +21,11 @@ spring:
       content-type: text/html
       # 缓存设置为false，这样修改之后马上生效，便于调试
     cache: false
+  web:
+    resources:
+      static-locations: classpath:/static/, classpath:/templates/
+
+
 
 mybatis:
   mapper-locations: classpath:mappers/*Dao.xml

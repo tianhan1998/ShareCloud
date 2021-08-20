@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>围脖登录</title>
+	<title>ShareCloud</title>
 
 	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 	<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet">
@@ -64,7 +64,7 @@
 							<button  aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 							账号或者密码错误 <a class="alert-link" href="#"></a>
 						</div>
-						<input name="type" type="hidden" value="0"><!--th:each="cookie:${#request.getCookies()}"  th:value="${cookie.getName().equals('CookieEmail')}" -->
+						<!--th:value="${cookie.getName().equals('CookieEmail')}" -->
 						<div class="form-group"><!--th:each="cookie:${#request.getCookies()}" th:if="${cookie.getName().equals('CookieEmail')}" th:value="${cookie.getValue()}"-->
 							<input id="mem_email" name="email" type="text" class="form-control"  placeholder="邮箱" th:each="cookie:${#request.getCookies()}" th:if="${cookie.getName().equals('CookieEmail')}" th:value="${cookie.getValue()}" required="" >
 							<input id="mem_email1" name="email" type="text" class="form-control"  placeholder="邮箱" >
@@ -74,11 +74,6 @@
 							<input id="mem_pwd" name="password" type="password" class="form-control"th:each="cookie:${#request.getCookies()}" th:if="${cookie.getName().equals('CookiePassword')}" th:value="${cookie.getValue()}" placeholder="密码" required="">
 							<input id="mem_pwd1" name="password" type="password" class="form-control" placeholder="密码" >
 						</div>
-						<!--<tr>
-                            <td colspan="2" style="text-align:center">
-                                <input type="checkbox" name="remember" value="1" />记住用户名&nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" name="autologin" value="1" /> 自动登录</td>
-                        </tr>-->
 						<div class="form-group">
 							<label class="radio-inline">
 								<input type="checkbox" name="remember" value="1" />记住用户名
@@ -87,10 +82,10 @@
 								<input type="checkbox" name="autologin" value="1" /> 自动登录
 							</label>
 						</div>
-						<button id="mem_submit" type="submit" class="btn btn-primary block full-width m-b">登陆</button>
-						<!--							<a href="retrievePassword"><small>忘记密码?</small></a>-->
+						<button id="mem_submit" type="button" class="btn btn-primary block full-width m-b" onclick="login()">开车</button>
+						<a href="retrievePassword"><small>忘记密码?</small></a>
 						<p class="text-muted text-center"><small>没有账号吗？</small></p>
-						<a class="btn btn-sm btn-white btn-block" th:href="@{/register}">创建账号</a>
+						<a class="btn btn-sm btn-white btn-block" th:href="@{/register}">马上上车</a>
 						<div style="min-height:50px;"></div>
 					</form>
 				</div>
@@ -102,6 +97,7 @@
 <!-- Mainly scripts -->
 <script th:src="@{/js/jquery.min.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
+<script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.js"></script>
 <!--		引入加密-->
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
 <script th:src="@{/js/sweetalert.min.js}"></script>
@@ -186,11 +182,12 @@
 			$.ajax({
 				type:"post",
 				url:context+"user/login",
-				data:$("#memForm :input")/*表格序列化，去除空值*/
+				data:JSON.stringify($("#memForm :input")/*表格序列化，去除空值*/
 						.filter(function(index, element) {
 							return $(element).val() != "";
 						})
-						.serialize(),
+						.serializeJSON()),
+				contentType:"application/json",
 				success:function (result) {
 					console.log(result);
 					if(result.code===200){//登录成功

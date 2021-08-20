@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>围脖注册</title>
+	<title>马上上车</title>
 	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 	<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet">
 
@@ -57,7 +57,6 @@
 			<div class="tab-content">
 				<div class="tab-pane active" id="panel-967992">
 					<form id="memForm" class="m-t" role="form">
-						<input type="hidden" name="type" value="0">
 						<div class="form-group">
 							<input id="mem-email" name="email" type="text" class="form-control" placeholder="邮箱" required="required">
 							<div id="mem-email-log" class="badge label label-danger" style="display: none">该邮箱已被注册</div>
@@ -75,7 +74,7 @@
 							<div id="pwd-log" class="badge label label-danger" style="display: none">两次密码不一致</div>
 						</div>
 						<div class="form-group">
-							<input id="inviteCode" type="text" class="form-control" placeholder="邀请码" required="">
+							<input id="inviteCode" name="activeCoder" type="text" class="form-control" placeholder="邀请码" required="">
 							<div id="invite-log" class="badge label label-danger" style="display: none">邀请码有误</div>
 						</div>
 						<!--						<div class="form-group">-->
@@ -99,6 +98,7 @@
 <script th:src="@{/js/icheck.min.js}"></script>
 <!--		引入加密-->
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script src="https://cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.js"></script>
 <script th:src="@{/js/sweetalert.min.js}"></script>
 <script>
 	// var publicKey;
@@ -134,7 +134,7 @@
 	$(document).ready(function() {
 
 		var flagMedPwd=0;
-		var flagEmailPhone=0;
+		var flagEmailPhone=1;
 		// var flagyzm=0;
 
 		// //个人验证码校验
@@ -207,7 +207,9 @@
 				$.ajax({
 					type:"post",
 					url:context+"user/register",
-					data:$("#memForm").serialize(),
+					data:JSON.stringify($("#memForm").serializeJSON()),
+					contentType:"application/json",
+					datatype:"json",
 					success:function (result) {
 						console.log(result);
 						if(result.code===200){//注册成功需要重新登录
@@ -216,14 +218,15 @@
 							});
 						}else {//失败
 							$('#pwd1').val(item);//失败密码替换掉
-							swal(result.msg).then(function () {
+							swal(result.msg[0]).then(function () {
+								console.log(result.msg);
 								window.location.reload();
 							});
 						}
 					},
 					error:function (result) {
 						$('#pwd1').val(item);//失败密码替换掉
-						console.log(result);
+						console.log(result.msg);
 					}
 				})
 			}else{
@@ -238,7 +241,7 @@
 			if (pwd1.length > 3) {
 				$("#pwd1-log").hide();
 			} else if(pwd1.length!==0) {
-				$("#pwd1-log").show().empty().append("密码最少要3位");
+				$("#pwd1-log").show().empty().append("密码最少要4位");
 			} else{
 				$("#pwd1-log").hide();
 			}
