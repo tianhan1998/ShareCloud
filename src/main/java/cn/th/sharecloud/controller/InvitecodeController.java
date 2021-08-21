@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2021-08-19
  */
 @RestController
-@RequestMapping("/sharecloud/invitecode")
+@RequestMapping("/invitecode")
 public class InvitecodeController {
 
 }
